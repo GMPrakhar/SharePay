@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SharePay.UI.GroupsPage"
+             Title="Groups">
+    <ContentPage.Content>
+        <ScrollView>
+            <CollectionView ItemsSource="{Binding Groups}" SelectionMode="Single" SelectionChanged="OnGroupSelected">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="10" BorderColor="Gray" CornerRadius="5">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor">
+                                                <Setter.Value>
+                                                    <AppThemeBinding Light="White" Dark="Black"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor">
+                                                <Setter.Value>
+                                                    <AppThemeBinding Light="LightGray" Dark="#555"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <StackLayout Orientation="Horizontal" Spacing="10">
+                                <Image Source="placeholder.png" WidthRequest="40" HeightRequest="40"/>
+                                <StackLayout>
+                                    <Label Text="{Binding Name}" FontSize="20" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Description}" FontSize="14"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

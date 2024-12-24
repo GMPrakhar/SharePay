@@ -1,0 +1,6 @@
+@SharePay.API_HostAddress = http://localhost:5298
+
+GET {{SharePay.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

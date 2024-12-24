@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SharePay.UI.TransactionsPage"
+             Title="Transactions">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{Binding GroupName}" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" Margin="10"/>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                <Button Text="Add Transaction" Clicked="OnAddTransactionClicked"/>
+                <Button Text="Balances" Clicked="OnBalancesClicked"/>
+            </StackLayout>
+            <ScrollView>
+                <CollectionView ItemsSource="{Binding Transactions}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" Margin="10" BorderColor="Gray" CornerRadius="5">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor">
+                                                    <Setter.Value>
+                                                        <AppThemeBinding Light="White" Dark="Black"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor">
+                                                    <Setter.Value>
+                                                        <AppThemeBinding Light="LightGray" Dark="#555"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <StackLayout>
+                                    <Label Text="{Binding Description}" FontSize="20" FontAttributes="Bold"/>
+                                    <Label Text="{Binding TotalAmount, StringFormat='Total Amount: {0:C}'}" FontSize="14"/>
+                                    <Label Text="{Binding Category}" FontSize="14"/>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

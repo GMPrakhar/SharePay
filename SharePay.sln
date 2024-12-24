@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharePay.UI", "SharePay.UI\SharePay.UI.csproj", "{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharePay.Business", "SharePay.Business\SharePay.Business.csproj", "{794F7A87-C564-46D5-A717-741BEEACEEEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharePay.Models", "SharePay.Models\SharePay.Models.csproj", "{63773EA6-46CA-4AA6-9650-035A49E77956}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharePay.Repository", "SharePay.Repository\SharePay.Repository.csproj", "{76BCF14D-0B37-46BE-A8F4-A4312FE079EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharePay.APIFunctions", "SharePay.APIFunctions\SharePay.APIFunctions.csproj", "{469FB9C8-70C3-43B7-89A0-01E8CD140B2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B3A443A-4590-4A91-BA71-0C1AF4F3CFE7}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{794F7A87-C564-46D5-A717-741BEEACEEEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794F7A87-C564-46D5-A717-741BEEACEEEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794F7A87-C564-46D5-A717-741BEEACEEEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794F7A87-C564-46D5-A717-741BEEACEEEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63773EA6-46CA-4AA6-9650-035A49E77956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63773EA6-46CA-4AA6-9650-035A49E77956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63773EA6-46CA-4AA6-9650-035A49E77956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63773EA6-46CA-4AA6-9650-035A49E77956}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76BCF14D-0B37-46BE-A8F4-A4312FE079EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76BCF14D-0B37-46BE-A8F4-A4312FE079EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76BCF14D-0B37-46BE-A8F4-A4312FE079EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76BCF14D-0B37-46BE-A8F4-A4312FE079EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{469FB9C8-70C3-43B7-89A0-01E8CD140B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{469FB9C8-70C3-43B7-89A0-01E8CD140B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{469FB9C8-70C3-43B7-89A0-01E8CD140B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{469FB9C8-70C3-43B7-89A0-01E8CD140B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF1F4A55-EE60-49BD-B574-446D791EC4A2}
+	EndGlobalSection
+EndGlobal

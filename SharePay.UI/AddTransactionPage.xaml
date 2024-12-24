@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SharePay.UI.AddTransactionPage"
+             Title="Add Transaction">
+    <ContentPage.Content>
+        <StackLayout Padding="20">
+            <Label Text="Add Transaction" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" Margin="10"/>
+            <Entry Placeholder="Description" Text="{Binding Description}" />
+            <Entry Placeholder="Total Amount" Keyboard="Numeric" Text="{Binding TotalAmount}" />
+            <Picker Title="Category" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" />
+            <Label Text="Select Users" FontSize="18" FontAttributes="Bold" Margin="10,0"/>
+            <CollectionView ItemsSource="{Binding Users}" SelectionMode="Multiple" SelectionChanged="OnUserSelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Orientation="Horizontal" Padding="10">
+                            <Label Text="{Binding Name}" VerticalOptions="Center" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button Text="Submit" Command="{Binding SubmitCommand}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
