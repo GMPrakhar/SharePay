@@ -1,0 +1,38 @@
+<div class="add-transaction">
+    <h3>Add Transaction</h3>
+    <form [formGroup]="transactionForm" (ngSubmit)="submitTransaction()">
+      <clr-input-container>
+        <label>Description</label>
+        <input clrInput formControlName="description" placeholder="Description" />
+      </clr-input-container>
+  
+      <clr-input-container>
+        <label>Total Amount</label>
+        <input clrInput formControlName="total_amount" type="number" placeholder="Total Amount" />
+      </clr-input-container>
+  
+      <clr-select-container>
+        <label>Category</label>
+        <select clrSelect formControlName="category">
+          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+      </clr-select-container>
+
+      <clr-select-container>
+        <label>Paid by</label>
+        <select clrSelect formControlName="from_user">
+          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+        </select>
+      </clr-select-container>
+  
+      <clr-checkbox-container>
+        <label>Include</label>
+        <clr-checkbox-wrapper *ngFor="let user of users">
+          <input clrCheckbox type="checkbox" [value]="user" (change)="onUserSelectionChange($event, user)" />
+          <label>{{ user.name }}</label>
+        </clr-checkbox-wrapper>
+      </clr-checkbox-container>
+  
+      <button clrButton type="submit" [disabled]="transactionForm.invalid">Submit</button>
+    </form>
+  </div>

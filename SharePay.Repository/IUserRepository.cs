@@ -7,5 +7,6 @@ namespace SharePay.Repository
     {
         Task AddUser(UserModel userModel);
         Task<UserModel?> GetUserByEmail(string email);
+        Task<List<UserViewModel>> GetUsersByEmail(List<string> emails);
     }
 }

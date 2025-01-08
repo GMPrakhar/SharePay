@@ -11,14 +11,14 @@ namespace SharePay.APIFunctions
     public class GroupController
     {
         private readonly ILogger<GroupController> _logger;
-        private readonly IUserGroupBusiness userGroupBusiness;
-        private readonly IGroupBusiness groupBusiness;
+        private readonly IUserGroupBusiness _userGroupBusiness;
+        private readonly IGroupBusiness _groupBusiness;
 
         public GroupController(ILogger<GroupController> logger, IUserGroupBusiness userGroupBusiness, IGroupBusiness groupBusiness)
         {
             _logger = logger;
-            this.userGroupBusiness = userGroupBusiness;
-            this.groupBusiness = groupBusiness;
+            _userGroupBusiness = userGroupBusiness;
+            _groupBusiness = groupBusiness;
         }
 
         [Function(nameof(CreateGroupAsync))]
@@ -28,52 +28,50 @@ namespace SharePay.APIFunctions
 
             var jsonSettings = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var groupModel = await req.ReadFromJsonAsync<GroupModel>(jsonSettings);
+            var groupModel = await JsonSerializer.DeserializeAsync<GroupModel>(req.Body, jsonSettings);
 
-            if(groupModel == null)
+            if (groupModel == null)
             {
                 return new BadRequestObjectResult("Please provide a valid group model");
             }
 
-            await this.userGroupBusiness.CreateGroup(groupModel);
+            var result = await _userGroupBusiness.CreateGroup(groupModel);
 
-            return new OkObjectResult("Welcome to Azure Functions!");
+            return new OkObjectResult(new object());
         }
 
         [Function(nameof(ListGroupsAsync))]
-        public async Task<IActionResult> ListGroupsAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/user/{userId}/groups")] HttpRequest req,
-            Guid userId)
+        public async Task<IActionResult> ListGroupsAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/user/{userId}/groups")] HttpRequest req, Guid userId)
         {
             _logger.LogInformation("HTTP Trigger function to get list of groups for the user");
-            
-            var groups = await this.userGroupBusiness.GetGroupsForUser(userId);
+
+            var groups = await _userGroupBusiness.GetGroupsForUser(userId);
 
             return new OkObjectResult(groups);
         }
 
         [Function(nameof(GetGroupAsync))]
-        public async Task<IActionResult> GetGroupAsync([HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/groups/{groupId}")] HttpRequest req)
+        public async Task<IActionResult> GetGroupAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/groups/{groupId}")] HttpRequest req, Guid groupId)
         {
-            _logger.LogInformation("HTTP Trigger function to process group create");
-            
-            var jsonSettings = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-            };
+            _logger.LogInformation("HTTP Trigger function to get group details");
 
-            var userModel = await req.ReadFromJsonAsync<UserModel>(jsonSettings);
-
-            if (userModel == null)
+            var userId = req.HttpContext.User.Identity.Name ?? req.Query["userId"]; ;
+            if (string.IsNullOrEmpty(userId))
             {
-                return new BadRequestObjectResult("Please provide a valid user model");
+                return new BadRequestObjectResult("UserId query parameter is required.");
             }
 
-           // await this.userGroupBusiness.Get(groupModel);
+            var group = await _groupBusiness.GetGroup(Guid.Parse(userId), groupId);
 
-            return new OkObjectResult("Welcome to Azure Functions!");
+            if (group == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkObjectResult(group);
         }
 
         [Function(nameof(AddTransactionAsync))]
@@ -83,24 +81,31 @@ namespace SharePay.APIFunctions
 
             var jsonSettings = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var transactionModel = await req.ReadFromJsonAsync<TransactionModel>(jsonSettings);
+            var transactionModel = await JsonSerializer.DeserializeAsync<TransactionModel>(req.Body, jsonSettings);
 
             if (transactionModel == null)
             {
                 return new BadRequestObjectResult("Please provide a valid transaction model");
             }
 
-            var result = await this.groupBusiness.AddTransaction(groupId, transactionModel);
+            var userId = req.HttpContext.User.Identity.Name ?? req.Query["userId"];
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new BadRequestObjectResult("UserId query parameter is required.");
+            }
 
-            if (!result)
+            var result = await _groupBusiness.AddTransaction(Guid.Parse(userId), groupId, transactionModel);
+            transactionModel.Id = result;
+
+            if (result == Guid.Empty)
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
-            return new OkObjectResult("Transaction added successfully");
+            return new OkObjectResult(transactionModel);
         }
 
         [Function(nameof(GetConsolidatedTransactionAsync))]
@@ -108,7 +113,13 @@ namespace SharePay.APIFunctions
         {
             _logger.LogInformation("HTTP Trigger function to get consolidated transactions for a group");
 
-            var consolidatedTransactions = await this.groupBusiness.GetConsolidatedTransactions(groupId);
+            var userId = req.HttpContext.User.Identity.Name ?? req.Query["userId"] ;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new BadRequestObjectResult("UserId query parameter is required.");
+            }
+
+            var consolidatedTransactions = await _groupBusiness.GetConsolidatedTransactions(Guid.Parse(userId), groupId);
 
             return new OkObjectResult(consolidatedTransactions);
         }
@@ -116,7 +127,8 @@ namespace SharePay.APIFunctions
         [Function(nameof(GetTransactionsAsync))]
         public async Task<IActionResult> GetTransactionsAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/groups/{groupId}/transactions")] HttpRequest req, Guid groupId)
         {
-            // Get page number and size from request params
+            _logger.LogInformation("HTTP Trigger function to get transactions for a group");
+
             var page = req.Query["page"];
             var size = req.Query["size"];
 
@@ -124,9 +136,14 @@ namespace SharePay.APIFunctions
             {
                 return new BadRequestObjectResult("Page and size query parameters are required.");
             }
-            
-            var allTransactions = await this.groupBusiness.GetTransactions(groupId, int.Parse(page), int.Parse(size));
-            _logger.LogInformation("HTTP Trigger function to get consolidated transactions for a group");
+
+            var userId = req.HttpContext.User.Identity.Name ?? req.Query["userId"];
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new BadRequestObjectResult("UserId query parameter is required.");
+            }
+
+            var allTransactions = await _groupBusiness.GetTransactions(Guid.Parse(userId), groupId, int.Parse(page), int.Parse(size));
 
             return new OkObjectResult(allTransactions);
         }
@@ -136,7 +153,7 @@ namespace SharePay.APIFunctions
         {
             _logger.LogInformation("HTTP Trigger function to add a user to a group");
 
-            var result = await this.userGroupBusiness.AddUserToGroup(userId, groupId);
+            var result = await _userGroupBusiness.AddUserToGroup(userId, groupId);
 
             if (!result)
             {
@@ -146,14 +163,51 @@ namespace SharePay.APIFunctions
             return new OkObjectResult("User added to group successfully");
         }
 
+        [Function(nameof(AddMultipleUsersToGroupAsync))]
+        public async Task<IActionResult> AddMultipleUsersToGroupAsync([HttpTrigger(AuthorizationLevel.Function, "post", Route = "v1/groups/{groupId}/users")] HttpRequest req, Guid groupId)
+        {
+            _logger.LogInformation("HTTP Trigger function to add multiple users to a group");
+
+            var jsonSettings = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+            };
+
+            var userIds = await JsonSerializer.DeserializeAsync<List<Guid>>(req.Body, jsonSettings);
+
+            if (userIds == null || !userIds.Any())
+            {
+                return new BadRequestObjectResult("Please provide a valid list of user IDs");
+            }
+
+            var result = await _userGroupBusiness.AddMultipleUsersToGroup(userIds, groupId);
+
+            if (!result)
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+            return new OkObjectResult("Users added to group successfully");
+        }
+
         [Function(nameof(GetGroupUsersAsync))]
         public async Task<IActionResult> GetGroupUsersAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = "v1/groups/{groupId}/users")] HttpRequest req, Guid groupId)
         {
-            var users = await groupBusiness.GetGroupUsersAsync(groupId);
+            _logger.LogInformation("HTTP Trigger function to get users of a group");
+
+            var userId = req.HttpContext.User.Identity.Name ?? req.Query["userId"]; ;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new BadRequestObjectResult("UserId query parameter is required.");
+            }
+
+            var users = await _groupBusiness.GetGroupUsersAsync(Guid.Parse(userId), groupId);
+
             if (users == null)
             {
                 return new NotFoundResult();
             }
+
             return new OkObjectResult(users);
         }
     }

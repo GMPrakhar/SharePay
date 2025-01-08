@@ -1,0 +1,16 @@
+.card {
+    background-color: #ffffff; /* Initial color */
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .card:hover {
+    background-color: #ddd; /* Darken the background */
+    color: #fff; /* Change text to white for contrast */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  

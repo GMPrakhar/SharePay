@@ -7,5 +7,6 @@ namespace SharePay.Business.Interfaces
     {
         Task AddUser(UserModel userModel);
         Task<UserViewModel?> GetUserByEmail(string email);
+        Task<List<UserViewModel>> GetUsersByEmail(List<string> emails);
     }
 }

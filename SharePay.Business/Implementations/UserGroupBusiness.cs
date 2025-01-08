@@ -23,6 +23,11 @@ namespace SharePay.Business.Implementations
             return this.userGroupRepository.AddUserToGroup(userId, groupId);
         }
 
+        public Task<bool> AddMultipleUsersToGroup(List<Guid> userIds, Guid groupId)
+        {
+            return this.userGroupRepository.AddMultipleUsersToGroup(userIds, groupId);
+        }
+
         public Task<bool> CreateGroup(GroupModel group)
         {
             return this.userGroupRepository.CreateGroup(group);

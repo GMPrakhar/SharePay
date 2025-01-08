@@ -11,7 +11,7 @@ namespace SharePay.Repository
 {
     public class GroupRepository : IGroupRepository
     {
-        public async Task<bool> AddTransaction(Guid groupId, TransactionModel transactionModel)
+        public async Task<Guid> AddTransaction(Guid userId, Guid groupId, TransactionModel transactionModel)
         {
             using var connection = new SqlConnection(Database.ConnectionString);
             await connection.OpenAsync();
@@ -24,13 +24,14 @@ namespace SharePay.Repository
                 // Insert into Transactions table
                 var transactionId = Guid.NewGuid();
                 command.CommandText = @"
-                    INSERT INTO Transactions (transaction_id, group_id, recording_user, transaction_type, name)
-                    VALUES (@transactionId, @groupId, @fromUserId, @category, @name)";
+                    INSERT INTO Transactions (transaction_id, group_id, recording_user, transaction_type, name, total_amount)
+                    VALUES (@transactionId, @groupId, @fromUserId, @category, @name, @totalAmount)";
                 command.Parameters.AddWithValue("@transactionId", transactionId);
                 command.Parameters.AddWithValue("@groupId", groupId);
                 command.Parameters.AddWithValue("@fromUserId", transactionModel.FromUser);
                 command.Parameters.AddWithValue("@category", transactionModel.Category);
                 command.Parameters.AddWithValue("@name", transactionModel.Description);
+                command.Parameters.AddWithValue("@totalAmount", transactionModel.TotalAmount);
 
                 await command.ExecuteNonQueryAsync();
 
@@ -77,21 +78,21 @@ namespace SharePay.Repository
                 await command.ExecuteNonQueryAsync();
 
                 await transaction.CommitAsync();
-                return true;
+                return transactionId;
             }
             catch (Exception)
             {
                 await transaction.RollbackAsync();
-                return false;
+                return Guid.Empty;
             }
         }
 
-        public Task DeleteGroup(Guid groupId)
+        public Task DeleteGroup(Guid userId, Guid groupId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ISet<BalancedTransactionModel>> GetConsolidatedTransactions(Guid groupId)
+        public async Task<ISet<BalancedTransactionModel>> GetConsolidatedTransactions(Guid userId, Guid groupId)
         {
             // Get the list of all users balances in the group
 
@@ -112,12 +113,12 @@ namespace SharePay.Repository
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var userId = reader.GetGuid(0);
+                var id = reader.GetGuid(0);
                 var balance = reader.GetDecimal(1);
                 var name = reader.GetString(2);
 
-                userBalanceMap.Add(userId, balance);
-                userNameMap.Add(userId, name);
+                userBalanceMap.Add(id, balance);
+                userNameMap.Add(id, name);
             }
 
             // Create a list of transactions that needs to be done based on the balances in the userBalanceMap. The balance will be positive or negative depending on whether the user would get the money or send the money.
@@ -132,29 +133,38 @@ namespace SharePay.Repository
 
         }
 
-        public Task<GroupModel> GetGroup(Guid groupId)
+        public Task<GroupModel> GetGroup(Guid userId, Guid groupId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ISet<TransactionViewModel>> GetTransactions(Guid groupId, int page, int size)
+        public async Task<ISet<TransactionViewModel>> GetTransactions(Guid userId, Guid groupId, int page, int size)
         {
-            // Implement this method
             {
                 using var connection = new SqlConnection(Database.ConnectionString);
                 await connection.OpenAsync();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = @"
-                    SELECT t.transaction_id, name, recording_user, transaction_type, SUM(owed_amount)
+                    SELECT t.transaction_id, name, recording_user, transaction_type, t.total_amount
+                    , CASE WHEN t.recording_user = @userId THEN
+                            (Select CAST(SUM(owed_amount) AS VARCHAR)
+                            FROM transaction_details td
+                            WHERE td.user_id <> @userId
+                            AND t.transaction_id = td.transaction_id)
+                        ELSE 
+                            (Select CAST(-1*SUM(owed_amount) AS VARCHAR)
+                            FROM transaction_details td
+                            WHERE td.user_id = @userId
+                            AND t.transaction_id = td.transaction_id)
+                        END As TranasctionInfo
+                    , t.created_at
                     FROM Transactions t
-                    INNER JOIN Transaction_Details td
-                    ON td.transaction_id = t.transaction_id
                     WHERE group_id = @groupId
-                    GROUP by t.transaction_id, name, recording_user, transaction_type, t.created_at
                     ORDER BY t.created_at DESC
                     OFFSET @offset ROWS FETCH NEXT @size ROWS ONLY";
 
+                command.Parameters.AddWithValue("@userId", userId);
                 command.Parameters.AddWithValue("@groupId", groupId);
                 command.Parameters.AddWithValue("@offset", (page - 1) * size);
                 command.Parameters.AddWithValue("@size", size);
@@ -169,7 +179,9 @@ namespace SharePay.Repository
                         Description = reader.GetString(1),
                         FromUser = reader.GetGuid(2),
                         Category = Enum.Parse<TransactionCategory>(reader.GetString(3)),
-                        TotalAmount = reader.GetDecimal(4)
+                        TotalAmount = reader.IsDBNull(4) ? 0 : reader.GetDecimal(4),
+                        TransactionInfo = reader.IsDBNull(5) ? "0" : reader.GetString(5),
+                        CreatedAt = reader.GetDateTime(6)
                     };
 
                     transactions.Add(transaction);
@@ -180,7 +192,7 @@ namespace SharePay.Repository
 
         }
 
-        public async Task<IEnumerable<UserViewModel>> GetGroupUsersAsync(Guid groupId)
+        public async Task<IEnumerable<UserViewModel>> GetGroupUsersAsync(Guid userId, Guid groupId)
         {
             var users = new List<UserViewModel>();
 
@@ -206,7 +218,7 @@ namespace SharePay.Repository
             return users;
         }
 
-        public Task<bool> UpdateGroup(GroupModel group)
+        public Task<bool> UpdateGroup(Guid userId, GroupModel group)
         {
             throw new NotImplementedException();
         }

@@ -15,5 +15,9 @@ namespace SharePay.Models
         public required string Description { get; set; }
 
         public TransactionCategory Category { get; set; }
+
+        public string TransactionInfo {get; set;} = string.Empty;
+
+        public DateTime CreatedAt { get; set; }
     }
 }

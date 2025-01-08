@@ -16,5 +16,7 @@ namespace SharePay.Business.Interfaces
         Task<bool> AddUserToGroup(Guid userId, Guid groupId);
 
         Task<bool> RemoveUserFromGroup(Guid userId, Guid groupId);
+
+        Task<bool> AddMultipleUsersToGroup(List<Guid> userIds, Guid groupId);
     }
 }

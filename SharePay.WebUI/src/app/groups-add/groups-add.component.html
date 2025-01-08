@@ -1,0 +1,21 @@
+<div class="add-group">
+  <h3>Add Group</h3>
+  <form [formGroup]="groupForm" (ngSubmit)="submitGroup()">
+    <clr-input-container>
+      <label>Name</label>
+      <input clrInput formControlName="name" placeholder="Group Name" />
+    </clr-input-container>
+
+    <clr-textarea-container>
+      <label>User Emails ( comma seperated )</label>
+      <textarea clrTextarea formControlName="userEmails" placeholder="Emails of the users"></textarea>
+    </clr-textarea-container>
+
+    <button class="btn btn-icon" (click)="loadUsersFromEmail()">Add</button>
+    <ul>
+      <li *ngFor="let user of users">{{ user.name }}</li>
+    </ul>
+
+    <button clrButton type="submit" [disabled]="groupForm.invalid">Submit</button>
+  </form>
+</div>

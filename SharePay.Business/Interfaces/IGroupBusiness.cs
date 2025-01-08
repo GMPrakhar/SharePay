@@ -9,18 +9,18 @@ namespace SharePay.Business.Interfaces
 {
     public interface IGroupBusiness
     {
-        Task<GroupModel> GetGroup(Guid groupId);
+        Task<GroupModel> GetGroup(Guid userId, Guid groupId);
 
-        Task<bool> UpdateGroup(GroupModel group);
+        Task<bool> UpdateGroup(Guid userId, GroupModel group);
 
-        Task DeleteGroup(Guid groupId);
+        Task DeleteGroup(Guid userId, Guid groupId);
 
-        Task<bool> AddTransaction(Guid groupId, TransactionModel transaction);
+        Task<Guid> AddTransaction(Guid userId, Guid groupId, TransactionModel transaction);
 
-        Task<ISet<BalancedTransactionModel>> GetConsolidatedTransactions(Guid groupId);
+        Task<ISet<BalancedTransactionModel>> GetConsolidatedTransactions(Guid userId, Guid groupId);
 
-        Task<ISet<TransactionViewModel>> GetTransactions(Guid groupId, int page, int size);
+        Task<ISet<TransactionViewModel>> GetTransactions(Guid userId, Guid groupId, int page, int size);
 
-        Task<IEnumerable<UserViewModel>> GetGroupUsersAsync(Guid groupId);
+        Task<IEnumerable<UserViewModel>> GetGroupUsersAsync(Guid userId, Guid groupId);
     }
 }

@@ -21,7 +21,8 @@ CREATE TABLE Transactions (
     name NVARCHAR(255),
     recording_user UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(user_id),
     group_id UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Groups(group_id),
-    transaction_type NVARCHAR(50) -- Can store values like 'settle' or 'expense'
+    transaction_type NVARCHAR(50), -- Can store values like 'settle' or 'expense'
+    total_amount DECIMAL(10, 2) -- positive or negative
 );
 
 -- Transaction_Details Table

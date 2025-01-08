@@ -1,0 +1,13 @@
+<div class="card-container">
+    <div class="card" *ngFor="let balance of balances">
+        <div class="card-block clr-row">
+            <div class="clr-col-8">
+                <h5 class="card-title">{{ balance.from_name }} owes {{ balance.to_name }}</h5>
+                <p class="card-text">{{ balance.amount | currency }}</p>
+            </div>
+            <div class="clr-col-4">
+                <button class="btn btn-primary" (click)="settleUp(balance)">Settle Up</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+
+<div class="transaction-cards">
+    <div *ngFor="let transaction of transactions" class="card">
+        <div class="card-block clr-row">
+            <div class="clr-col-2">
+                <h5 class="created-at">{{ toDateFormat(transaction.created_at) }}</h5>
+            </div>
+            <div class="clr-col-5">
+                <div class="clr-row">
+                    <div class="clr-col-1">
+                        <clr-icon class="transaction-icon" [attr.shape]=transactionCategoryToIconMapper(transaction.category)></clr-icon>
+                    </div>  
+                    <div class="clr-col-10">
+                        <h5 class="card-title transaction-title">{{ transaction.description }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="clr-col-2">
+                <span cds-text="smallcaption">Total</span>
+                <span class="card-amount">{{ transaction.total_amount }}</span>
+            </div>
+            <div class="clr-col-3">
+                <div *ngIf="transaction.transaction_info > 0" style="color: green;">
+                    <span cds-text="smallcaption" style="color: green;">You get</span>
+                    <span class="card-amount" >{{ transaction.transaction_info }}</span>
+                </div>  
+                <div *ngIf="transaction.transaction_info < 0" style="color: red;">
+                    <span cds-text="smallcaption" style="color: red;">You owe</span>
+                    <span class="card-amount" >{{ -1 * transaction.transaction_info }}</span>
+                </div>  
+                <div *ngIf="transaction.transaction_info == 0">
+                    <span cds-text="smallcaption">You owe</span>
+                    <span class="card-amount" >Nothing</span>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>

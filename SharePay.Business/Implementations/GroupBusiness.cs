@@ -16,39 +16,39 @@ namespace SharePay.Business.Implementations
             _groupRepository = groupRepository;
         }
 
-        public async Task<GroupModel> GetGroup(Guid groupId)
+        public async Task<GroupModel> GetGroup(Guid userId, Guid groupId)
         {
-            throw new NotImplementedException();
+            return await _groupRepository.GetGroup(userId, groupId);
         }
 
-        public async Task<bool> UpdateGroup(GroupModel group)
+        public async Task<bool> UpdateGroup(Guid userId, GroupModel group)
         {
-            return await _groupRepository.UpdateGroup(group);
+            return await _groupRepository.UpdateGroup(userId, group);
         }
 
-        public async Task DeleteGroup(Guid groupId)
+        public async Task DeleteGroup(Guid userId, Guid groupId)
         {
-            await _groupRepository.DeleteGroup(groupId);
+            await _groupRepository.DeleteGroup(userId, groupId);
         }
 
-        public Task<bool> AddTransaction(Guid groupId, TransactionModel transaction)
+        public Task<Guid> AddTransaction(Guid userId, Guid groupId, TransactionModel transaction)
         {
-            return _groupRepository.AddTransaction(groupId, transaction);
+            return _groupRepository.AddTransaction(userId, groupId, transaction);
         }
 
-        public Task<ISet<BalancedTransactionModel>> GetConsolidatedTransactions(Guid groupId)
+        public Task<ISet<BalancedTransactionModel>> GetConsolidatedTransactions(Guid userId, Guid groupId)
         {
-            return _groupRepository.GetConsolidatedTransactions(groupId);
+            return _groupRepository.GetConsolidatedTransactions(userId, groupId);
         }
 
-        public Task<ISet<TransactionViewModel>> GetTransactions(Guid groupId, int page, int size)
+        public Task<ISet<TransactionViewModel>> GetTransactions(Guid userId, Guid groupId, int page, int size)
         {
-            return _groupRepository.GetTransactions(groupId, page, size);
+            return _groupRepository.GetTransactions(userId, groupId, page, size);
         }
 
-        public Task<IEnumerable<UserViewModel>> GetGroupUsersAsync(Guid groupId)
+        public Task<IEnumerable<UserViewModel>> GetGroupUsersAsync(Guid userId, Guid groupId)
         {
-            return _groupRepository.GetGroupUsersAsync(groupId);
+            return _groupRepository.GetGroupUsersAsync(userId, groupId);
         }
     }
 }

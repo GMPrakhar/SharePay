@@ -1,0 +1,25 @@
+<div class="clr-row">
+    <div class="clr-col-10">
+        <h1>{{groupName}}</h1>
+    </div>
+    <div class="clr-col-2" style="align-self: flex-end;">
+        <button class="btn btn-primary btn-icon">
+            <clr-icon shape="plus" is-solid="true" (click)="navigateToAddTransaction()"></clr-icon>
+        </button>
+    </div>
+</div>
+
+<clr-tabs>
+    <clr-tab>
+        <button clrTabLink id="link1">Transactions</button>
+        <clr-tab-content id="content1" *clrIfActive="true">
+            <app-transaction-list [transactions]="transactions"></app-transaction-list>
+        </clr-tab-content>
+    </clr-tab>
+    <clr-tab>
+        <button clrTabLink>Balances</button>
+        <clr-tab-content *clrIfActive>
+            <app-balances [groupId]="id"></app-balances>
+        </clr-tab-content>
+    </clr-tab>
+</clr-tabs>

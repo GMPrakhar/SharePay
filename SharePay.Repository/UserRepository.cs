@@ -42,5 +42,32 @@ namespace SharePay.Repository
             }
             return null;
         }
+
+        public async Task<List<UserViewModel>> GetUsersByEmail(List<string> emails)
+        {
+            var users = new List<UserViewModel>();
+            var emailParameters = string.Join(",", emails.Select((email, index) => $"@Email{index}"));
+            using SqlConnection connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            string query = $"SELECT user_id, name, email FROM Users WHERE email IN ({emailParameters})";
+            using SqlCommand command = new SqlCommand(query, connection);
+            for (int i = 0; i < emails.Count; i++)
+            {
+                command.Parameters.AddWithValue($"@Email{i}", emails[i]);
+            }
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                users.Add(new UserViewModel
+                {
+                    Id = reader.GetGuid(0),
+                    Name = reader.GetString(1),
+                    Email = reader.GetString(2)
+                });
+            }
+            return users;
+        }
+
+
     }
 }

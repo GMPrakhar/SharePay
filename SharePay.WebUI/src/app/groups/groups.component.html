@@ -1,0 +1,17 @@
+<div class="clr-row">
+    <div class="clr-col-10">
+        <h1>Groups</h1>
+    </div>
+    <div class="clr-col-2" style="align-self: flex-end;">
+        <button class="btn btn-primary btn-icon">
+            <clr-icon shape="plus" is-solid="true" (click)="navigateToAddGroup()"></clr-icon>
+        </button>
+    </div>
+</div>
+<div class="group-cards">
+    <div *ngFor="let group of groups" class="card" (click)="toTransactions(group)">
+        <div class="card-block">
+            <h5 class="card-title">{{ group.name }}</h5>
+        </div>
+    </div>
+</div>

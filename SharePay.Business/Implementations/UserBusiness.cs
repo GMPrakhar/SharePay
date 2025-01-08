@@ -23,5 +23,10 @@ namespace SharePay.Business.Implementations
         {
             return await userRepository.GetUserByEmail(email);
         }
+
+        public async Task<List<UserViewModel>> GetUsersByEmail(List<string> emails)
+        {
+            return await userRepository.GetUsersByEmail(emails);
+        }
     }
 }

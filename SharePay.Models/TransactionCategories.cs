@@ -13,6 +13,7 @@ namespace SharePay.Models
         Travel = 2,
         Fashion = 3,
         Grocery = 4,
-        Rent = 5
+        Rent = 5,
+        Settle = 6
     }
 }

@@ -82,7 +82,7 @@ namespace SharePay.UI
         {
             var transaction = new TransactionModel
             {
-                FromUser = Guid.Parse(Global.User), // Replace with actual user ID
+                FromUser = Guid.Parse(Guid.NewGuid().ToString()), // Replace with actual user ID
                 ToUsers = new HashSet<Guid>(SelectedUsers.Select(u => u.Id)),
                 DivisionStrategyPerUserUnit = SelectedUsers.ToDictionary(u => u.Id, u => 1d), // Populate with actual data
                 TotalAmount = TotalAmount,

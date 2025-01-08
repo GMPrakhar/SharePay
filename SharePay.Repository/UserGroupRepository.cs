@@ -112,5 +112,39 @@ namespace SharePay.Repository
 
             return await command.ExecuteNonQueryAsync() > 0;
         }
+        
+        public async Task<bool> AddMultipleUsersToGroup(List<Guid> userIds, Guid groupId)
+        {
+            using var connection = new SqlConnection(Database.ConnectionString);
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                using var command = connection.CreateCommand();
+                command.Transaction = transaction;
+
+                var values = new StringBuilder();
+                for (int i = 0; i < userIds.Count; i++)
+                {
+                    values.Append($"(@userId{i}, @groupId, @addedByUserId{i}, @balance),");
+                    command.Parameters.AddWithValue($"@userId{i}", userIds[i]);
+                    command.Parameters.AddWithValue($"@addedByUserId{i}", userIds[i]); // Assuming the user is adding themselves, update this with AppContext.CurrentUser in future.
+                }
+                values.Length--; // Remove the last comma
+
+                command.CommandText = $"INSERT INTO Group_Users (user_id, group_id, added_by_user_id, balance) VALUES {values}";
+                command.Parameters.AddWithValue("@groupId", groupId);
+                command.Parameters.AddWithValue("@balance", 0);
+
+                await command.ExecuteNonQueryAsync();
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+        }
     }
 }
